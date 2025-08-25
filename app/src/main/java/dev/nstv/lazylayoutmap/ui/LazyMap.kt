@@ -5,6 +5,7 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -59,6 +60,7 @@ fun LazyMap(
 ) {
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
+    val cache = remember { mutableStateMapOf<String, ImageBitmap>() }
 
     // Camera state
     var scale by remember { mutableFloatStateOf(1f) }  // 1f == 100%
@@ -67,8 +69,6 @@ fun LazyMap(
     val worldTopLeft = remember(pan, scale) { Offset(-pan.x / scale, -pan.y / scale) }
 
     // Images
-    val cache = remember { mutableStateMapOf<String, ImageBitmap>() }
-
     var bgBitmap by remember(backgroundPath) { mutableStateOf<ImageBitmap?>(null) }
     LaunchedEffect(backgroundPath) {
         if (!backgroundPath.isNullOrBlank()) {
@@ -99,7 +99,12 @@ fun LazyMap(
         }
     }
 
-    // ---- Pan clamp (used ONLY in state/gestures, not in measure) ----
+    // Camera
+    fun restartCamera() {
+        scale = 1f
+        pan = Offset.Zero
+    }
+
     fun clampPan(panOffset: Offset, zoomLevel: Float, viewportSize: IntSize): Offset {
         val worldWidth = viewportSize.width * zoomLevel
         val worldHeight = viewportSize.height * zoomLevel
@@ -110,6 +115,23 @@ fun LazyMap(
         return Offset(x, y)
     }
 
+    fun visibleByZoom(tile: Tile, zoomLevel: Float): Boolean =
+        zoomLevel in tile.zoomLevelStart..tile.zoomLevelEnd
+
+    fun intersectsViewport(
+        left: Float,
+        top: Float,
+        width: Float,
+        height: Float,
+        viewportWidth: Int,
+        viewportHeight: Int
+    ): Boolean {
+        val r = left + width
+        val b = top + height
+        return r > 0f && b > 0f && left < viewportWidth && top < viewportHeight
+    }
+
+    // ItemProvider
     val provider = {
         object : LazyLayoutItemProvider {
             override val itemCount: Int get() = tiles.size
@@ -139,22 +161,7 @@ fun LazyMap(
         }
     }
 
-    fun visibleByZoom(tile: Tile, zoomLevel: Float): Boolean =
-        zoomLevel in tile.zoomLevelStart..tile.zoomLevelEnd
-
-    fun intersectsViewport(
-        left: Float,
-        top: Float,
-        width: Float,
-        height: Float,
-        viewportWidth: Int,
-        viewportHeight: Int
-    ): Boolean {
-        val r = left + width
-        val b = top + height
-        return r > 0f && b > 0f && left < viewportWidth && top < viewportHeight
-    }
-
+    // Measure Policy
     val measurePolicy = remember(scale, pan, tiles) {
         LazyLayoutMeasurePolicy { constraints ->
             val viewportWidth = constraints.maxWidth
@@ -168,13 +175,13 @@ fun LazyMap(
 
             val slotsToPlace = ArrayList<Slot>()
 
-            tiles.forEachIndexed { i, t ->
-                if (!visibleByZoom(t, scale)) return@forEachIndexed
+            tiles.forEachIndexed { index, tile ->
+                if (!visibleByZoom(tile, scale)) return@forEachIndexed
 
-                val width = t.size.width * scale
-                val height = t.size.height * scale
-                val left = t.offset.x * scale + panX
-                val top = t.offset.y * scale + panY
+                val width = tile.size.width * scale
+                val height = tile.size.height * scale
+                val left = tile.offset.x * scale + panX
+                val top = tile.offset.y * scale + panY
 
                 if (!intersectsViewport(
                         left,
@@ -187,7 +194,7 @@ fun LazyMap(
                 ) return@forEachIndexed
 
                 slotsToPlace += Slot(
-                    index = i,
+                    index = index,
                     x = left.fastRoundToInt(),
                     y = top.fastRoundToInt(),
                     width = max(1, width.fastRoundToInt()),
@@ -209,9 +216,17 @@ fun LazyMap(
         }
     }
 
+    // Layout
     Box(
         modifier = modifier
             .fillMaxSize()
+            .pointerInput("restartCamera") {
+                detectTapGestures(
+                    onDoubleTap = {
+                        restartCamera()
+                    }
+                )
+            }
             .pointerInput(maxZoomLevel) {
                 detectTransformGestures(panZoomLock = false) { centroid, panChange, zoomChange, _ ->
                     if (viewportSize.width == 0 || viewportSize.height == 0) return@detectTransformGestures
@@ -228,6 +243,7 @@ fun LazyMap(
                     pan = clampPan(candidatePan, newZoomLevel, viewportSize)
                 }
             }
+
     ) {
         // Stretched background
         bgBitmap?.let { backgroundImage ->
