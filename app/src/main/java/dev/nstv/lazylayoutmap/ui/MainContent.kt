@@ -2,6 +2,7 @@ package dev.nstv.lazylayoutmap.ui
 
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -47,26 +48,30 @@ fun MainContent(modifier: Modifier = Modifier) {
             modifier = Modifier
                 .fillMaxSize()
                 .padding(contentPadding)
-                .padding(Grid.One)
         ) {
-            DropDownWithArrows(
+            Column(
                 modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentSize(Alignment.TopStart)
-                    .zIndex(2f),
-                options = Screen.entries.map { it.name }.toList(),
-                selectedIndex = Screen.entries.indexOf(selectedScreen),
-                onSelectionChanged = {
-                    selectedScreen = Screen.entries.toTypedArray()[it]
-                },
-                textStyle = MaterialTheme.typography.headlineSmall,
-                loopSelection = true,
-            )
-            HorizontalDivider(
-                modifier = Modifier
-                    .padding(vertical = Grid.One)
-                    .zIndex(2f),
-            )
+                    .padding(bottom = Grid.One)
+                    .background(MaterialTheme.colorScheme.surface)
+                    .zIndex(2f)
+            ) {
+                DropDownWithArrows(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .wrapContentSize(Alignment.TopStart),
+                    options = Screen.entries.map { it.name }.toList(),
+                    selectedIndex = Screen.entries.indexOf(selectedScreen),
+                    onSelectionChanged = {
+                        selectedScreen = Screen.entries.toTypedArray()[it]
+                    },
+                    textStyle = MaterialTheme.typography.headlineSmall,
+                    loopSelection = true,
+                )
+                HorizontalDivider(
+                    modifier = Modifier
+                        .padding(top = Grid.One),
+                )
+            }
             Crossfade(
                 targetState = selectedScreen,
                 animationSpec = tween(durationMillis = 500)
