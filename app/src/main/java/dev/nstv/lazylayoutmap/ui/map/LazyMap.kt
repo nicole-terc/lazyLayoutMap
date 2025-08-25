@@ -48,7 +48,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastRoundToInt
-import dev.nstv.lazylayoutmap.ui.Tile
+import dev.nstv.lazylayoutmap.ui.map.Tile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext

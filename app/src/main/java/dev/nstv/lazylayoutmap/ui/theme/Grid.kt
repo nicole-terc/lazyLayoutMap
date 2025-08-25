@@ -3,6 +3,7 @@ package dev.nstv.lazylayoutmap.ui.theme
 import androidx.compose.ui.unit.dp
 
 object Grid {
+    val Single = 1.dp
     val Quarter = 2.dp
     val Half = 4.dp
     val One = 8.dp

@@ -1,10 +1,11 @@
-package dev.nstv.lazylayoutmap.ui.grid
+package dev.nstv.lazylayoutmap.ui.grid.lazylayout
 
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 
 @Composable
-fun LazyGridScreen(
+fun LazyLayoutGridScreen(
     modifier: Modifier = Modifier,
 ) {
+
 }

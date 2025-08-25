@@ -5,7 +5,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
-import dev.nstv.lazylayoutmap.ui.Tile
+import dev.nstv.lazylayoutmap.ui.map.Tile
 
 @Composable
 fun LazyMapScreen(

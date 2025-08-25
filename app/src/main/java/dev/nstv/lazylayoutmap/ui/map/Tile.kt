@@ -1,4 +1,4 @@
-package dev.nstv.lazylayoutmap.ui
+package dev.nstv.lazylayoutmap.ui.map
 
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.unit.IntSize
