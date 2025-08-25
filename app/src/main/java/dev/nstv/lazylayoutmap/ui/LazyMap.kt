@@ -1,10 +1,20 @@
 package dev.nstv.lazylayoutmap.ui
 
 import android.graphics.BitmapFactory
+import androidx.compose.animation.AnimatedContent
+import androidx.compose.animation.SizeTransform
+import androidx.compose.animation.animateContentSize
+import androidx.compose.animation.core.keyframes
+import androidx.compose.animation.expandIn
+import androidx.compose.animation.fadeIn
+import androidx.compose.animation.fadeOut
+import androidx.compose.animation.shrinkOut
+import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.detectTransformGestures
 import androidx.compose.foundation.layout.Box
@@ -269,31 +279,53 @@ fun LazyMap(
             measurePolicy = measurePolicy
         )
 
-        // Overlay window (fixed on top)
-        Column(
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(8.dp)
-                .background(Color.Black.copy(alpha = 0.7f), shape = MaterialTheme.shapes.small)
-                .padding(horizontal = 8.dp, vertical = 6.dp)
-        ) {
-            Text(
-                "Viewport: width=${viewportSize.width}, height=${viewportSize.height}",
-                color = Color.White,
-                fontWeight = FontWeight.Bold
-            )
-            Text(
-                "Zoom: ${"%.3f".format(scale)}x ( ${"%.0f".format(scale * 100)}%)",
-                color = Color.White,
-            )
-            Text(
-                "World TL: x=${"%.1f".format(worldTopLeft.x)}, y=${"%.1f".format(worldTopLeft.y)}",
-                color = Color.White
-            )
-            Text(
-                "Pan px: x=${"%.1f".format(pan.x)}, y=${"%.1f".format(pan.y)}",
-                color = Color.White
-            )
+        if (DEBUG) {
+            // Overlay window (fixed on top)
+            var overlayExpanded by remember { mutableStateOf(true) }
+            AnimatedContent(
+                targetState = overlayExpanded,
+                transitionSpec = { fadeIn() togetherWith fadeOut() }
+            ) { isExpanded ->
+                Column(
+                    modifier = Modifier
+                        .align(Alignment.TopStart)
+                        .padding(8.dp)
+                        .background(
+                            Color.Black.copy(alpha = 0.7f),
+                            shape = MaterialTheme.shapes.small
+                        )
+                        .padding(horizontal = 8.dp, vertical = 6.dp)
+                        .clickable {
+                            overlayExpanded = !overlayExpanded
+                        }
+                ) {
+                    if (isExpanded) {
+                        Text(
+                            "Viewport: width=${viewportSize.width}, height=${viewportSize.height}",
+                            color = Color.White,
+                            fontWeight = FontWeight.Bold
+                        )
+                        Text(
+                            "Zoom: ${"%.3f".format(scale)}x ( ${"%.0f".format(scale * 100)}%)",
+                            color = Color.White,
+                        )
+                        Text(
+                            "World TL: x=${"%.1f".format(worldTopLeft.x)}, y=${
+                                "%.1f".format(
+                                    worldTopLeft.y
+                                )
+                            }",
+                            color = Color.White
+                        )
+                        Text(
+                            "Pan px: x=${"%.1f".format(pan.x)}, y=${"%.1f".format(pan.y)}",
+                            color = Color.White
+                        )
+                    } else {
+                        Text(" i ", color = Color.White)
+                    }
+                }
+            }
         }
     }
 }
