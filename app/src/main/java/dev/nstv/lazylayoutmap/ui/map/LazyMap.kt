@@ -1,14 +1,9 @@
-package dev.nstv.lazylayoutmap.ui
+package dev.nstv.lazylayoutmap.ui.map
 
 import android.graphics.BitmapFactory
 import androidx.compose.animation.AnimatedContent
-import androidx.compose.animation.SizeTransform
-import androidx.compose.animation.animateContentSize
-import androidx.compose.animation.core.keyframes
-import androidx.compose.animation.expandIn
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.animation.shrinkOut
 import androidx.compose.animation.togetherWith
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.ExperimentalFoundationApi
@@ -52,8 +47,8 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.util.fastCoerceAtLeast
 import androidx.compose.ui.util.fastRoundToInt
+import dev.nstv.lazylayoutmap.ui.Tile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
