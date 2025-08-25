@@ -32,7 +32,7 @@ class MainActivity : ComponentActivity() {
                                 path = "tiles/castle.png",
                                 offset = Offset(0f, 0f),
                                 size = IntSize(300, 300),
-                                zoomLevelStart = 0f,
+                                zoomLevelStart = 1f,
                                 zoomLevelEnd = 2.99f,
                             ),
                             Tile(

@@ -50,7 +50,9 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.Constraints
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.IntSize
+import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.util.fastCoerceAtLeast
 import androidx.compose.ui.util.fastRoundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
@@ -68,6 +70,7 @@ fun LazyMap(
     tiles: List<Tile>,
     backgroundPath: String? = null
 ) {
+    require(minZoomLevel > 0) { "Error: minZoomLevel must be higher than 0" }
     val context = LocalContext.current
     val coroutineScope = rememberCoroutineScope()
     val cache = remember { mutableStateMapOf<String, ImageBitmap>() }
@@ -188,10 +191,14 @@ fun LazyMap(
             tiles.forEachIndexed { index, tile ->
                 if (!visibleByZoom(tile, scale)) return@forEachIndexed
 
-                val width = tile.size.width * scale
-                val height = tile.size.height * scale
-                val left = tile.offset.x * scale + panX
-                val top = tile.offset.y * scale + panY
+                // Size at zoomLevelStart is 100% of the size
+                val adjustedScale = scale / tile.fullSizeZoomLevel
+                val width = tile.size.width * adjustedScale
+                val height = tile.size.height * adjustedScale
+
+                // Lazy adjust from center
+                val left = (viewportSize.center.x + tile.offset.x) * scale + panX
+                val top = (viewportSize.center.y + tile.offset.y) * scale + panY
 
                 if (!intersectsViewport(
                         left,

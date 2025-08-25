@@ -8,6 +8,7 @@ data class Tile(
     val path: String,
     val offset: Offset,
     val size: IntSize,
-    val zoomLevelStart: Float, // Percentage 100% = no zoom
+    val zoomLevelStart: Float,
     val zoomLevelEnd: Float,
+    val fullSizeZoomLevel: Float = zoomLevelStart, // Zoom level at witch this item is at 100% size, useful for aligning different items at different zoom levels
 )
