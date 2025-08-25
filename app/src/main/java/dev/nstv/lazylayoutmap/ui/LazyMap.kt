@@ -15,7 +15,16 @@ import androidx.compose.foundation.lazy.layout.LazyLayoutItemProvider
 import androidx.compose.foundation.lazy.layout.LazyLayoutMeasurePolicy
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableFloatStateOf
+import androidx.compose.runtime.mutableStateMapOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
@@ -35,7 +44,7 @@ import androidx.compose.ui.util.fastRoundToInt
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
-import kotlin.math.*
+import kotlin.math.max
 
 private const val DEBUG = true
 
@@ -43,7 +52,8 @@ private const val DEBUG = true
 @Composable
 fun LazyMap(
     modifier: Modifier = Modifier,
-    maxZoom: Int = 10,
+    minZoomLevel: Float = 1f,
+    maxZoomLevel: Float = 10f,
     tiles: List<Tile>,
     backgroundPath: String? = null
 ) {
@@ -89,27 +99,14 @@ fun LazyMap(
         }
     }
 
-    // ---- World bounds from tiles (at 100%) ----
-    val worldSize: IntSize = remember(tiles) {
-        if (tiles.isEmpty()) IntSize.Zero else {
-            var maxX = 0f;
-            var maxY = 0f
-            for (t in tiles) {
-                maxX = max(maxX, t.offset.x + t.size.width)
-                maxY = max(maxY, t.offset.y + t.size.height)
-            }
-            IntSize(maxX.roundToInt(), maxY.roundToInt())
-        }
-    }
-
     // ---- Pan clamp (used ONLY in state/gestures, not in measure) ----
     fun clampPan(panOffset: Offset, zoomLevel: Float, viewportSize: IntSize): Offset {
-        val worldWidth = worldSize.width * zoomLevel
-        val worldHeight = worldSize.height * zoomLevel
+        val worldWidth = viewportSize.width * zoomLevel
+        val worldHeight = viewportSize.height * zoomLevel
         val maxX = worldWidth - viewportSize.width
         val maxY = worldHeight - viewportSize.height
-        val x = if (maxX > 0f) panOffset.x.coerceIn(-maxX, 0f) else panOffset.x
-        val y = if (maxY > 0f) panOffset.y.coerceIn(-maxY, 0f) else panOffset.y
+        val x = panOffset.x.coerceIn(-maxX, 0f)
+        val y = panOffset.y.coerceIn(-maxY, 0f)
         return Offset(x, y)
     }
 
@@ -143,7 +140,7 @@ fun LazyMap(
     }
 
     fun visibleByZoom(tile: Tile, zoomLevel: Float): Boolean =
-        (zoomLevel * 100f) in tile.zoomLevelStart..tile.zoomLevelEnd
+        zoomLevel in tile.zoomLevelStart..tile.zoomLevelEnd
 
     fun intersectsViewport(
         left: Float,
@@ -215,20 +212,20 @@ fun LazyMap(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .pointerInput(maxZoom) {
+            .pointerInput(maxZoomLevel) {
                 detectTransformGestures(panZoomLock = false) { centroid, panChange, zoomChange, _ ->
                     if (viewportSize.width == 0 || viewportSize.height == 0) return@detectTransformGestures
 
                     val old = scale
-                    val new = (old * zoomChange).coerceIn(1f, 2f.pow(maxZoom.toFloat()))
+                    val newZoomLevel = (old * zoomChange).coerceIn(minZoomLevel, maxZoomLevel)
 
                     // focal lock: keep world point under centroid stationary
                     val worldFocus = (centroid - pan) / old
-                    val panAfterZoom = centroid - worldFocus * new
+                    val panAfterZoom = centroid - worldFocus * newZoomLevel
 
                     val candidatePan = panAfterZoom + panChange
-                    scale = new
-                    pan = clampPan(candidatePan, new, viewportSize)
+                    scale = newZoomLevel
+                    pan = clampPan(candidatePan, newZoomLevel, viewportSize)
                 }
             }
     ) {
@@ -261,13 +258,17 @@ fun LazyMap(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(8.dp)
-                .background(Color(0xAA000000), shape = MaterialTheme.shapes.small)
+                .background(Color.Black.copy(alpha = 0.7f), shape = MaterialTheme.shapes.small)
                 .padding(horizontal = 8.dp, vertical = 6.dp)
         ) {
             Text(
-                "Zoom: ${"%.3f".format(scale)}x ( ${"%.0f".format(scale * 100)}%)",
+                "Viewport: width=${viewportSize.width}, height=${viewportSize.height}",
                 color = Color.White,
                 fontWeight = FontWeight.Bold
+            )
+            Text(
+                "Zoom: ${"%.3f".format(scale)}x ( ${"%.0f".format(scale * 100)}%)",
+                color = Color.White,
             )
             Text(
                 "World TL: x=${"%.1f".format(worldTopLeft.x)}, y=${"%.1f".format(worldTopLeft.y)}",
