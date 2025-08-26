@@ -10,15 +10,26 @@ import androidx.compose.ui.util.fastRoundToInt
 import dev.nstv.composablesheep.library.util.SheepColor
 import kotlin.math.ceil
 
-const val ITEMS_PER_ROW = 10
+const val ITEMS_PER_ROW = 14
 const val ITEM_INCREASE_FACTOR = 2
 const val MAX_ITEMS_PER_ROW = 300
 const val ZOOM_THRESHOLD = 0.5f
+
+val colorOptions = listOf(
+    SheepColor.Green,
+//    SheepColor.Orange,
+    SheepColor.Magenta,
+//    SheepColor.Blue,
+    Color.Cyan,
+    Color.Yellow,
+    SheepColor.Purple,
+)
 
 @Composable
 fun rememberGridItems(
     itemsPerRow: Int = ITEMS_PER_ROW,
     itemSize: Dp = DEFAULT_GRID_ITEM_SIZE,
+    useColors: Boolean = false,
     density: Density = LocalDensity.current,
 ) = remember(itemSize, itemsPerRow, density) {
 
@@ -31,28 +42,22 @@ fun rememberGridItems(
             for (x in 0 until adjustedItemsPerRow) {
                 val itemIndex = y * adjustedItemsPerRow + x
 
+                val itemColor =
+                    if (useColors) colorOptions[itemIndex % colorOptions.size] else SheepColor.Green
+
                 add(
                     CustomGridItem(
                         id = "#${itemIndex}",
                         index = itemIndex,
                         x = x * gridItemWidth,
                         y = y * gridItemWidth,
+                        color = itemColor,
                     )
                 )
             }
         }
     }
 }
-
-val colorOptions = listOf(
-    SheepColor.Green,
-//    SheepColor.Orange,
-    SheepColor.Magenta,
-//    SheepColor.Blue,
-    Color.Cyan,
-    Color.Yellow,
-    SheepColor.Purple,
-)
 
 @Composable
 fun rememberGridItemsWithZoom(

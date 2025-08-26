@@ -33,8 +33,8 @@ fun LazyGridScreenRealScroll(
 
     var itemsPerRow by remember { mutableIntStateOf(ITEMS_PER_ROW) }
 
-    val items: List<CustomGridItem> = rememberGridItems(itemsPerRow)
-    val itemProvider = remember(items) { LazyGridItemProvider(items) }
+    val items: List<CustomGridItem> = rememberGridItems(itemsPerRow, useColors = true)
+    val itemProvider = remember(items) { LazyGridItemProvider(items, showText = false) }
 
     var offset by remember { mutableStateOf(Offset.Zero) }
 
@@ -53,6 +53,9 @@ fun LazyGridScreenRealScroll(
                 detectTapGestures(
                     onDoubleTap = {
                         itemsPerRow *= ITEM_INCREASE_FACTOR
+                    },
+                    onLongPress = {
+                        offset = Offset.Zero
                     }
                 )
             }
