@@ -14,9 +14,14 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.layout.Placeable
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.unit.Constraints
+import androidx.compose.ui.util.fastForEachIndexed
 import dev.nstv.lazylayoutmap.ui.grid.griditem.CustomGridItem
+import dev.nstv.lazylayoutmap.ui.grid.griditem.DEFAULT_GRID_ITEM_SIZE
 import dev.nstv.lazylayoutmap.ui.grid.griditem.ITEMS_PER_ROW
+import dev.nstv.lazylayoutmap.ui.grid.griditem.ITEM_INCREASE_FACTOR
 import dev.nstv.lazylayoutmap.ui.grid.griditem.rememberGridItems
 
 @Composable
@@ -24,6 +29,9 @@ fun LazyGridScreenRealScroll(
     modifier: Modifier = Modifier,
     constrainScroll: Boolean = false,
 ) {
+    val density = LocalDensity.current
+    val defaultItemSize = with(density) { DEFAULT_GRID_ITEM_SIZE.toPx() }
+
     var itemsPerRow by remember { mutableIntStateOf(ITEMS_PER_ROW) }
 
     val items: List<CustomGridItem> = rememberGridItems(itemsPerRow)
@@ -66,7 +74,7 @@ fun LazyGridScreenRealScroll(
             .pointerInput(Unit) {
                 detectTapGestures(
                     onDoubleTap = {
-                        itemsPerRow = itemsPerRow + itemsPerRow
+                        itemsPerRow *= ITEM_INCREASE_FACTOR
                     }
                 )
             }
@@ -79,14 +87,28 @@ fun LazyGridScreenRealScroll(
         val viewportWidth = constraints.maxWidth
         val viewportHeight = constraints.maxHeight
 
-        val placeables = items.mapIndexed { index, item ->
-            compose(index).first().measure(Constraints())
+        val placeablesIndexed: List<Pair<Int, Placeable>> = buildList {
+            items.fastForEachIndexed { itemIndex, item ->
+                if (
+                    intersectsViewport(
+                        left = item.x + offset.x,
+                        top = item.y + offset.y,
+                        width = defaultItemSize,
+                        height = defaultItemSize,
+                        viewportWidth = viewportWidth,
+                        viewportHeight = viewportHeight,
+                    )
+                ) {
+                    val placeable: Placeable = compose(itemIndex).first().measure(Constraints())
+                    add(itemIndex to placeable)
+                }
+            }
         }
 
         layout(viewportWidth, viewportHeight) {
-            placeables.forEachIndexed { index, placeable ->
-                val item = items[index]
-                placeable.placeRelative(item.x, item.y)
+            placeablesIndexed.forEach {
+                val item = items[it.first]
+                it.second.placeRelative(item.x, item.y)
             }
         }
     }

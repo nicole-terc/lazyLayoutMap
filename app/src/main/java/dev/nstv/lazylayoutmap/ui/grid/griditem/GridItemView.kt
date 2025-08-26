@@ -21,7 +21,7 @@ fun GridItemView(
 ) {
     Box(
         modifier = modifier
-            .size(DEFAULT_GRID_SIZE)
+            .size(DEFAULT_GRID_ITEM_SIZE)
             .background(color = item.color, shape = MaterialTheme.shapes.small)
             .innerShadow(
                 shape = MaterialTheme.shapes.small,

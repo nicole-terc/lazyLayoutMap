@@ -17,6 +17,7 @@ import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.unit.Constraints
 import dev.nstv.lazylayoutmap.ui.grid.griditem.CustomGridItem
 import dev.nstv.lazylayoutmap.ui.grid.griditem.ITEMS_PER_ROW
+import dev.nstv.lazylayoutmap.ui.grid.griditem.ITEM_INCREASE_FACTOR
 import dev.nstv.lazylayoutmap.ui.grid.griditem.rememberGridItems
 
 @Composable
@@ -66,7 +67,7 @@ fun LazyGridScreenSimpleScroll(
             .pointerInput(Unit) {
                 detectTapGestures(
                     onDoubleTap = {
-                        itemsPerRow = itemsPerRow + itemsPerRow
+                        itemsPerRow *= ITEM_INCREASE_FACTOR
                     }
                 )
             }

@@ -3,6 +3,7 @@ package dev.nstv.lazylayoutmap.ui
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -19,9 +20,20 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
-import dev.nstv.lazylayoutmap.ui.grid.lazylayout.LazyGridScreenSimpleScroll
+import dev.nstv.composablesheep.library.util.SheepColor
+import dev.nstv.lazylayoutmap.ui.Screen.GRID_LAZY_SCROLL
+import dev.nstv.lazylayoutmap.ui.Screen.GRID_LAZY_SIMPLE
+import dev.nstv.lazylayoutmap.ui.Screen.GRID_LAZY_SIMPLE_SCROLL
+import dev.nstv.lazylayoutmap.ui.Screen.GRID_NOT_LAZY
+import dev.nstv.lazylayoutmap.ui.Screen.GRID_NOT_LAZY_SCROLL
+import dev.nstv.lazylayoutmap.ui.Screen.GRID_NOT_LAZY_SCROLL_BOUND
+import dev.nstv.lazylayoutmap.ui.Screen.MAP
+import dev.nstv.lazylayoutmap.ui.grid.lazylayout.LazyGridScreenRealScroll
 import dev.nstv.lazylayoutmap.ui.grid.lazylayout.LazyGridScreenSimple
+import dev.nstv.lazylayoutmap.ui.grid.lazylayout.LazyGridScreenSimpleScroll
 import dev.nstv.lazylayoutmap.ui.grid.nonlazy.NonLazyGridScreen
 import dev.nstv.lazylayoutmap.ui.grid.nonlazy.NonLazyGridScreenWithScroll
 import dev.nstv.lazylayoutmap.ui.map.LazyMapScreen
@@ -35,6 +47,7 @@ private enum class Screen {
     GRID_NOT_LAZY_SCROLL_BOUND,
     GRID_LAZY_SIMPLE,
     GRID_LAZY_SIMPLE_SCROLL,
+    GRID_LAZY_SCROLL,
 }
 
 @Composable
@@ -44,7 +57,7 @@ fun MainContent(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .safeDrawingPadding()
     ) { contentPadding ->
-        var selectedScreen by remember { mutableStateOf(Screen.GRID_LAZY_SIMPLE_SCROLL) }
+        var selectedScreen by remember { mutableStateOf(GRID_LAZY_SCROLL) }
 
         Column(
             modifier = Modifier
@@ -53,7 +66,6 @@ fun MainContent(modifier: Modifier = Modifier) {
         ) {
             Column(
                 modifier = Modifier
-                    .padding(bottom = Grid.One)
                     .background(MaterialTheme.colorScheme.surface)
                     .zIndex(2f)
             ) {
@@ -79,12 +91,17 @@ fun MainContent(modifier: Modifier = Modifier) {
                 animationSpec = tween(durationMillis = 500)
             ) { screen ->
                 when (screen) {
-                    Screen.MAP -> LazyMapScreen()
-                    Screen.GRID_NOT_LAZY -> NonLazyGridScreen()
-                    Screen.GRID_NOT_LAZY_SCROLL -> NonLazyGridScreenWithScroll(constrainScroll = false)
-                    Screen.GRID_NOT_LAZY_SCROLL_BOUND -> NonLazyGridScreenWithScroll()
-                    Screen.GRID_LAZY_SIMPLE -> LazyGridScreenSimple()
-                    Screen.GRID_LAZY_SIMPLE_SCROLL -> LazyGridScreenSimpleScroll()
+                    MAP -> LazyMapScreen()
+                    GRID_NOT_LAZY -> NonLazyGridScreen()
+                    GRID_NOT_LAZY_SCROLL -> NonLazyGridScreenWithScroll(constrainScroll = false)
+                    GRID_NOT_LAZY_SCROLL_BOUND -> NonLazyGridScreenWithScroll()
+                    GRID_LAZY_SIMPLE -> LazyGridScreenSimple()
+                    GRID_LAZY_SIMPLE_SCROLL -> LazyGridScreenSimpleScroll()
+                    GRID_LAZY_SCROLL -> LazyGridScreenRealScroll(
+//                        modifier
+//                            .padding(Grid.Three)
+//                            .border(width = Grid.Half, color = SheepColor.Purple)
+                    )
                 }
             }
         }

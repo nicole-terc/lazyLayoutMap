@@ -48,7 +48,6 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.center
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastRoundToInt
-import dev.nstv.lazylayoutmap.ui.map.Tile
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.withContext
@@ -134,9 +133,9 @@ fun LazyMap(
         viewportWidth: Int,
         viewportHeight: Int
     ): Boolean {
-        val r = left + width
-        val b = top + height
-        return r > 0f && b > 0f && left < viewportWidth && top < viewportHeight
+        val right = left + width
+        val bottom = top + height
+        return right > 0f && bottom > 0f && left < viewportWidth && top < viewportHeight
     }
 
     // ItemProvider
