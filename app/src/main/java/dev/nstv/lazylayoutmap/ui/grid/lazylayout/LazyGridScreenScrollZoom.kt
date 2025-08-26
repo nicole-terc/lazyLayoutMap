@@ -41,7 +41,7 @@ import dev.nstv.lazylayoutmap.ui.grid.griditem.ITEMS_PER_ROW
 import dev.nstv.lazylayoutmap.ui.grid.griditem.ITEM_INCREASE_FACTOR
 import dev.nstv.lazylayoutmap.ui.grid.griditem.MAX_ZOOM_LEVEL
 import dev.nstv.lazylayoutmap.ui.grid.griditem.MIN_ZOOM_LEVEL
-import dev.nstv.lazylayoutmap.ui.grid.griditem.rememberGridItemsWithZoom
+import dev.nstv.lazylayoutmap.ui.grid.griditem.rememberGridItemsWithZoomAdjustedColors
 
 
 @Composable
@@ -61,12 +61,12 @@ fun LazyGridScreenScrollZoom(
     // Items
     val defaultItemSize = with(density) { DEFAULT_GRID_ITEM_SIZE.toPx() }
     var itemsPerRow by remember { mutableIntStateOf(ITEMS_PER_ROW) }
-    val items: List<CustomGridItem> = rememberGridItemsWithZoom(itemsPerRow)
+    val items: List<CustomGridItem> = rememberGridItemsWithZoomAdjustedColors(itemsPerRow)
     val itemProvider = remember(items) {
         LazyGridItemProvider(
             items = items,
             showText = false,
-//            zoomLevel = { scale }
+            zoomLevel = { scale }
         )
     }
 

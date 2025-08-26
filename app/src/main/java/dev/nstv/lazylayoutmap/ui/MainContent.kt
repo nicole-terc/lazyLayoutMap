@@ -40,7 +40,8 @@ import dev.nstv.lazylayoutmap.ui.map.LazyMapScreen
 import dev.nstv.lazylayoutmap.ui.theme.Grid
 import dev.nstv.lazylayoutmap.ui.theme.components.DropDownWithArrows
 
-private const val SHOW_BORDER = true
+private const val SHOW_BORDER = false
+private const val SHOW_DEBUG_INFO = false
 
 private enum class Screen {
     MAP,
@@ -64,8 +65,9 @@ fun MainContent(modifier: Modifier = Modifier) {
 
         val extraModifier = if (SHOW_BORDER) {
             Modifier
-                .padding(Grid.Three)
-                .border(width = Grid.Half, color = SheepColor.Purple)
+                .border(width = Grid.Ten, color = SheepColor.Black.copy(alpha = 0.5f))
+                .padding(Grid.Ten)
+
         } else Modifier
 
         Column(
@@ -107,7 +109,10 @@ fun MainContent(modifier: Modifier = Modifier) {
                     GRID_LAZY_SIMPLE -> LazyGridScreenSimple(extraModifier)
                     GRID_LAZY_SIMPLE_SCROLL -> LazyGridScreenSimpleScroll(extraModifier)
                     GRID_LAZY_SCROLL -> LazyGridScreenRealScroll(extraModifier)
-                    GRID_LAZY_SCROLL_ZOOM -> LazyGridScreenScrollZoom(extraModifier)
+                    GRID_LAZY_SCROLL_ZOOM -> LazyGridScreenScrollZoom(
+                        extraModifier,
+                        showDebugInfo = SHOW_DEBUG_INFO
+                    )
                 }
             }
         }

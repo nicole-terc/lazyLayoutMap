@@ -5,7 +5,7 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import dev.nstv.composablesheep.library.util.SheepColor
 
-val DEFAULT_GRID_ITEM_SIZE = 100.dp
+val DEFAULT_GRID_ITEM_SIZE = 80.dp
 const val MIN_ZOOM_LEVEL = 1f
 const val MAX_ZOOM_LEVEL = 10f
 
