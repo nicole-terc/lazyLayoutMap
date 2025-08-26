@@ -11,7 +11,8 @@ data class CustomGridItem(
     val id: String,
     val x: Int,
     val y: Int,
+    val zoomLevel: Float = 1f,
     val color: Color = SheepColor.Green,
     val borderColor: Color = SheepColor.Black,
-    val size: Dp = DEFAULT_GRID_ITEM_SIZE
+    val size: Dp = DEFAULT_GRID_ITEM_SIZE,
 )

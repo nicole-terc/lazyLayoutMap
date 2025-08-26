@@ -20,8 +20,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import dev.nstv.composablesheep.library.util.SheepColor
 import dev.nstv.lazylayoutmap.ui.Screen.GRID_LAZY_SCROLL
@@ -39,6 +37,8 @@ import dev.nstv.lazylayoutmap.ui.grid.nonlazy.NonLazyGridScreenWithScroll
 import dev.nstv.lazylayoutmap.ui.map.LazyMapScreen
 import dev.nstv.lazylayoutmap.ui.theme.Grid
 import dev.nstv.lazylayoutmap.ui.theme.components.DropDownWithArrows
+
+private const val SHOW_BORDER = true
 
 private enum class Screen {
     MAP,
@@ -58,6 +58,12 @@ fun MainContent(modifier: Modifier = Modifier) {
             .safeDrawingPadding()
     ) { contentPadding ->
         var selectedScreen by remember { mutableStateOf(GRID_LAZY_SCROLL) }
+
+        val extraModifier = if (SHOW_BORDER) {
+            Modifier
+                .padding(Grid.Three)
+                .border(width = Grid.Half, color = SheepColor.Purple)
+        } else Modifier
 
         Column(
             modifier = Modifier
@@ -92,16 +98,12 @@ fun MainContent(modifier: Modifier = Modifier) {
             ) { screen ->
                 when (screen) {
                     MAP -> LazyMapScreen()
-                    GRID_NOT_LAZY -> NonLazyGridScreen()
-                    GRID_NOT_LAZY_SCROLL -> NonLazyGridScreenWithScroll(constrainScroll = false)
-                    GRID_NOT_LAZY_SCROLL_BOUND -> NonLazyGridScreenWithScroll()
-                    GRID_LAZY_SIMPLE -> LazyGridScreenSimple()
-                    GRID_LAZY_SIMPLE_SCROLL -> LazyGridScreenSimpleScroll()
-                    GRID_LAZY_SCROLL -> LazyGridScreenRealScroll(
-//                        modifier
-//                            .padding(Grid.Three)
-//                            .border(width = Grid.Half, color = SheepColor.Purple)
-                    )
+                    GRID_NOT_LAZY -> NonLazyGridScreen(extraModifier)
+                    GRID_NOT_LAZY_SCROLL -> NonLazyGridScreenWithScroll(extraModifier, false)
+                    GRID_NOT_LAZY_SCROLL_BOUND -> NonLazyGridScreenWithScroll(extraModifier)
+                    GRID_LAZY_SIMPLE -> LazyGridScreenSimple(extraModifier)
+                    GRID_LAZY_SIMPLE_SCROLL -> LazyGridScreenSimpleScroll(extraModifier)
+                    GRID_LAZY_SCROLL -> LazyGridScreenRealScroll(extraModifier)
                 }
             }
         }
