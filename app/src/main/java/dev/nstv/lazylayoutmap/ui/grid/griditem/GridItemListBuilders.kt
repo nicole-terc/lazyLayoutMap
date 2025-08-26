@@ -97,7 +97,7 @@ fun rememberGridItemsWithZoom(
 
 @Composable
 fun rememberGridItemsWithZoomAdjustedColors(
-    itemsPerRow: Int = 5,
+    itemsPerRow: Int = ITEMS_PER_ROW,
     itemSize: Dp = DEFAULT_GRID_ITEM_SIZE,
     density: Density = LocalDensity.current,
     zoomLevels: List<Float> = listOf(1f, 2f, 4f, 8f),
@@ -127,6 +127,11 @@ fun rememberGridItemsWithZoomAdjustedColors(
                     val originalX = x / expansionFactor
                     val originalY = y / expansionFactor
 
+                    val localX =  x % expansionFactor
+                    val localY =  y % expansionFactor
+
+                    val localNumber = localY * expansionFactor + localX
+
                     // Calculate the item number in the original grid
                     val originalItemNumber = originalY * adjustedItemsPerRow + originalX
 
@@ -135,7 +140,7 @@ fun rememberGridItemsWithZoomAdjustedColors(
 
                     add(
                         CustomGridItem(
-                            id = "${zoomLevel.fastRoundToInt()}:${currentItemNumber}",
+                            id = "${zoomLevel.fastRoundToInt()}:${originalItemNumber}.$localNumber",
                             x = x * gridItemWidth / previousZoom.fastRoundToInt(),
                             y = y * gridItemWidth / previousZoom.fastRoundToInt(),
                             minZoomLevel = previousZoom - ZOOM_THRESHOLD,

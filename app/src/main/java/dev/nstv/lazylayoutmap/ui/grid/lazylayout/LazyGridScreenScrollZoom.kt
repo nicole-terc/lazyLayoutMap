@@ -50,6 +50,7 @@ fun LazyGridScreenScrollZoom(
     minZoomLevel: Float = MIN_ZOOM_LEVEL,
     maxZoomLevel: Float = MAX_ZOOM_LEVEL,
     showDebugInfo: Boolean = true,
+    toggleFullScreen: () -> Unit = {},
 ) {
     val density = LocalDensity.current
 
@@ -60,12 +61,12 @@ fun LazyGridScreenScrollZoom(
 
     // Items
     val defaultItemSize = with(density) { DEFAULT_GRID_ITEM_SIZE.toPx() }
-    var itemsPerRow by remember { mutableIntStateOf(ITEMS_PER_ROW) }
+    var itemsPerRow by remember { mutableIntStateOf(ITEMS_PER_ROW + ITEM_INCREASE_FACTOR) }
     val items: List<CustomGridItem> = rememberGridItemsWithZoomAdjustedColors(itemsPerRow)
     val itemProvider = remember(items) {
         LazyGridItemProvider(
             items = items,
-            showText = false,
+            showText = true,
             zoomLevel = { scale }
         )
     }
@@ -86,6 +87,9 @@ fun LazyGridScreenScrollZoom(
             modifier = Modifier
                 .pointerInput(Unit) {
                     detectTapGestures(
+                        onTap = {
+                            toggleFullScreen()
+                        },
                         onDoubleTap = {
                             itemsPerRow *= ITEM_INCREASE_FACTOR
                         },

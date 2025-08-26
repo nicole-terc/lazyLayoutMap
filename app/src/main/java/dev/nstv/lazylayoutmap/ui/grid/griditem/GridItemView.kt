@@ -15,6 +15,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.innerShadow
 import androidx.compose.ui.graphics.shadow.Shadow
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 
 
@@ -51,7 +52,8 @@ fun GridItemView(
         if (showText) {
             Text(
                 item.id,
-                fontSize = MaterialTheme.typography.headlineSmall.fontSize * itemZoomLevel
+                fontSize = MaterialTheme.typography.bodyLarge.fontSize * itemZoomLevel,
+                fontWeight = FontWeight.SemiBold
             )
         }
     }

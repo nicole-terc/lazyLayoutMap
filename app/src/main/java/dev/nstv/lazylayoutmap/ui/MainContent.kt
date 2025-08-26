@@ -1,9 +1,11 @@
 package dev.nstv.lazylayoutmap.ui
 
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -20,6 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.zIndex
 import dev.nstv.composablesheep.library.util.SheepColor
 import dev.nstv.lazylayoutmap.ui.Screen.GRID_LAZY_SCROLL
@@ -40,7 +43,7 @@ import dev.nstv.lazylayoutmap.ui.map.LazyMapScreen
 import dev.nstv.lazylayoutmap.ui.theme.Grid
 import dev.nstv.lazylayoutmap.ui.theme.components.DropDownWithArrows
 
-private const val SHOW_BORDER = false
+private const val SHOW_BORDER = true
 private const val SHOW_DEBUG_INFO = false
 
 private enum class Screen {
@@ -63,6 +66,12 @@ fun MainContent(modifier: Modifier = Modifier) {
     ) { contentPadding ->
         var selectedScreen by remember { mutableStateOf(GRID_LAZY_SCROLL_ZOOM) }
 
+        var showScreenSelector by remember { mutableStateOf(selectedScreen != GRID_LAZY_SCROLL_ZOOM) }
+
+        val onShowScreenSelector = {
+            showScreenSelector = !showScreenSelector
+        }
+
         val extraModifier = if (SHOW_BORDER) {
             Modifier
                 .border(width = Grid.Ten, color = SheepColor.Black.copy(alpha = 0.5f))
@@ -75,27 +84,29 @@ fun MainContent(modifier: Modifier = Modifier) {
                 .fillMaxSize()
                 .padding(contentPadding)
         ) {
-            Column(
-                modifier = Modifier
+            AnimatedVisibility(
+                showScreenSelector, modifier = Modifier
                     .background(MaterialTheme.colorScheme.surface)
                     .zIndex(2f)
             ) {
-                DropDownWithArrows(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .wrapContentSize(Alignment.TopStart),
-                    options = Screen.entries.map { it.name }.toList(),
-                    selectedIndex = Screen.entries.indexOf(selectedScreen),
-                    onSelectionChanged = {
-                        selectedScreen = Screen.entries.toTypedArray()[it]
-                    },
-                    textStyle = MaterialTheme.typography.headlineSmall,
-                    loopSelection = true,
-                )
-                HorizontalDivider(
-                    modifier = Modifier
-                        .padding(top = Grid.One),
-                )
+                Column {
+                    DropDownWithArrows(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .wrapContentSize(Alignment.TopStart),
+                        options = Screen.entries.map { it.name }.toList(),
+                        selectedIndex = Screen.entries.indexOf(selectedScreen),
+                        onSelectionChanged = {
+                            selectedScreen = Screen.entries.toTypedArray()[it]
+                        },
+                        textStyle = MaterialTheme.typography.headlineSmall,
+                        loopSelection = true,
+                    )
+                    HorizontalDivider(
+                        modifier = Modifier
+                            .padding(top = Grid.One),
+                    )
+                }
             }
             Crossfade(
                 targetState = selectedScreen,
@@ -104,14 +115,22 @@ fun MainContent(modifier: Modifier = Modifier) {
                 when (screen) {
                     MAP -> LazyMapScreen()
                     GRID_NOT_LAZY -> NonLazyGridScreen(extraModifier)
-                    GRID_NOT_LAZY_SCROLL -> NonLazyGridScreenWithScroll(extraModifier, false)
-                    GRID_NOT_LAZY_SCROLL_BOUND -> NonLazyGridScreenWithScroll(extraModifier)
+                    GRID_NOT_LAZY_SCROLL -> NonLazyGridScreenWithScroll(
+                        extraModifier,
+                        false
+                    )
+
+                    GRID_NOT_LAZY_SCROLL_BOUND -> NonLazyGridScreenWithScroll(
+                        extraModifier
+                    )
+
                     GRID_LAZY_SIMPLE -> LazyGridScreenSimple(extraModifier)
                     GRID_LAZY_SIMPLE_SCROLL -> LazyGridScreenSimpleScroll(extraModifier)
                     GRID_LAZY_SCROLL -> LazyGridScreenRealScroll(extraModifier)
                     GRID_LAZY_SCROLL_ZOOM -> LazyGridScreenScrollZoom(
                         extraModifier,
-                        showDebugInfo = SHOW_DEBUG_INFO
+                        showDebugInfo = SHOW_DEBUG_INFO,
+                        toggleFullScreen = onShowScreenSelector,
                     )
                 }
             }
