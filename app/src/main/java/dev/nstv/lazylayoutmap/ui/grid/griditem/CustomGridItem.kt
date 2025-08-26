@@ -11,6 +11,7 @@ const val MAX_ZOOM_LEVEL = 10f
 
 data class CustomGridItem(
     val id: String,
+    val index: Int,
     val x: Int,
     val y: Int,
     val color: Color = SheepColor.Green,

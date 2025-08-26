@@ -29,9 +29,12 @@ fun rememberGridItems(
     buildList {
         for (y in 0 until adjustedItemsPerRow) {
             for (x in 0 until adjustedItemsPerRow) {
+                val itemIndex = y * adjustedItemsPerRow + x
+
                 add(
                     CustomGridItem(
-                        id = "#${y * adjustedItemsPerRow + x}",
+                        id = "#${itemIndex}",
+                        index = itemIndex,
                         x = x * gridItemWidth,
                         y = y * gridItemWidth,
                     )
@@ -79,9 +82,12 @@ fun rememberGridItemsWithZoom(
 
             for (y in 0 until zoomLevelItemsPerRow) {
                 for (x in 0 until zoomLevelItemsPerRow) {
+                    val itemIndex = y * adjustedItemsPerRow + x
+
                     add(
                         CustomGridItem(
-                            id = "${zoomLevel.fastRoundToInt()}:${y * zoomLevelItemsPerRow + x}",
+                            id = "${zoomLevel.fastRoundToInt()}:${itemIndex}",
+                            index = itemIndex,
                             x = x * gridItemWidth / minZoom.fastRoundToInt(),
                             y = y * gridItemWidth / minZoom.fastRoundToInt(),
                             minZoomLevel = minZoom,
@@ -127,8 +133,8 @@ fun rememberGridItemsWithZoomAdjustedColors(
                     val originalX = x / expansionFactor
                     val originalY = y / expansionFactor
 
-                    val localX =  x % expansionFactor
-                    val localY =  y % expansionFactor
+                    val localX = x % expansionFactor
+                    val localY = y % expansionFactor
 
                     val localNumber = localY * expansionFactor + localX
 
@@ -141,6 +147,7 @@ fun rememberGridItemsWithZoomAdjustedColors(
                     add(
                         CustomGridItem(
                             id = "${zoomLevel.fastRoundToInt()}:${originalItemNumber}.$localNumber",
+                            index = currentItemNumber,
                             x = x * gridItemWidth / previousZoom.fastRoundToInt(),
                             y = y * gridItemWidth / previousZoom.fastRoundToInt(),
                             minZoomLevel = previousZoom - ZOOM_THRESHOLD,

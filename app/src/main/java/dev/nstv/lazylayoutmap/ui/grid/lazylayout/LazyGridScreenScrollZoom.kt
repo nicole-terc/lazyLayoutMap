@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.IntSize
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.util.fastForEachIndexed
 import androidx.compose.ui.util.fastRoundToInt
+import dev.nstv.lazylayoutmap.ui.SHEEP
 import dev.nstv.lazylayoutmap.ui.grid.griditem.CustomGridItem
 import dev.nstv.lazylayoutmap.ui.grid.griditem.DEFAULT_GRID_ITEM_SIZE
 import dev.nstv.lazylayoutmap.ui.grid.griditem.ITEMS_PER_ROW
@@ -49,8 +50,11 @@ fun LazyGridScreenScrollZoom(
     modifier: Modifier = Modifier,
     minZoomLevel: Float = MIN_ZOOM_LEVEL,
     maxZoomLevel: Float = MAX_ZOOM_LEVEL,
+    showItemText: Boolean = true,
     showDebugInfo: Boolean = true,
+    useSheep: Boolean = SHEEP,
     toggleFullScreen: () -> Unit = {},
+    toggleBorder: () -> Unit = {}
 ) {
     val density = LocalDensity.current
 
@@ -66,8 +70,9 @@ fun LazyGridScreenScrollZoom(
     val itemProvider = remember(items) {
         LazyGridItemProvider(
             items = items,
-            showText = true,
-            zoomLevel = { scale }
+            showText = showItemText,
+            useSheep = useSheep,
+            zoomLevel = { scale },
         )
     }
 
@@ -94,6 +99,7 @@ fun LazyGridScreenScrollZoom(
                             itemsPerRow *= ITEM_INCREASE_FACTOR
                         },
                         onLongPress = {
+                            toggleBorder()
                             restartCamera()
                         }
                     )

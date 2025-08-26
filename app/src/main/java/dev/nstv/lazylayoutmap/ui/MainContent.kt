@@ -2,10 +2,10 @@ package dev.nstv.lazylayoutmap.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
+import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,7 +22,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import dev.nstv.composablesheep.library.util.SheepColor
 import dev.nstv.lazylayoutmap.ui.Screen.GRID_LAZY_SCROLL
@@ -32,6 +32,7 @@ import dev.nstv.lazylayoutmap.ui.Screen.GRID_LAZY_SIMPLE_SCROLL
 import dev.nstv.lazylayoutmap.ui.Screen.GRID_NOT_LAZY
 import dev.nstv.lazylayoutmap.ui.Screen.GRID_NOT_LAZY_SCROLL
 import dev.nstv.lazylayoutmap.ui.Screen.GRID_NOT_LAZY_SCROLL_BOUND
+import dev.nstv.lazylayoutmap.ui.Screen.GRID_SHEEP
 import dev.nstv.lazylayoutmap.ui.Screen.MAP
 import dev.nstv.lazylayoutmap.ui.grid.lazylayout.LazyGridScreenRealScroll
 import dev.nstv.lazylayoutmap.ui.grid.lazylayout.LazyGridScreenScrollZoom
@@ -43,8 +44,9 @@ import dev.nstv.lazylayoutmap.ui.map.LazyMapScreen
 import dev.nstv.lazylayoutmap.ui.theme.Grid
 import dev.nstv.lazylayoutmap.ui.theme.components.DropDownWithArrows
 
-private const val SHOW_BORDER = true
+private const val SHOW_BORDER = false
 private const val SHOW_DEBUG_INFO = false
+const val SHEEP = false
 
 private enum class Screen {
     MAP,
@@ -55,6 +57,7 @@ private enum class Screen {
     GRID_LAZY_SIMPLE_SCROLL,
     GRID_LAZY_SCROLL,
     GRID_LAZY_SCROLL_ZOOM,
+    GRID_SHEEP,
 }
 
 @Composable
@@ -65,19 +68,22 @@ fun MainContent(modifier: Modifier = Modifier) {
             .safeDrawingPadding()
     ) { contentPadding ->
         var selectedScreen by remember { mutableStateOf(GRID_LAZY_SCROLL_ZOOM) }
-
-        var showScreenSelector by remember { mutableStateOf(selectedScreen != GRID_LAZY_SCROLL_ZOOM) }
-
+        var showScreenSelector by remember { mutableStateOf(true) }
         val onShowScreenSelector = {
             showScreenSelector = !showScreenSelector
         }
+        var showBorder by remember { mutableStateOf(SHOW_BORDER) }
+        val borderWidth by animateDpAsState(
+            targetValue = if (showBorder) Grid.Ten else 0.dp
+        )
 
-        val extraModifier = if (SHOW_BORDER) {
-            Modifier
-                .border(width = Grid.Ten, color = SheepColor.Black.copy(alpha = 0.5f))
-                .padding(Grid.Ten)
+        val toggleBorder = {
+            showBorder = !showBorder
+        }
 
-        } else Modifier
+        val extraModifier = Modifier
+            .border(width = borderWidth, color = SheepColor.Black.copy(alpha = 0.5f))
+            .padding(borderWidth)
 
         Column(
             modifier = Modifier
@@ -115,15 +121,8 @@ fun MainContent(modifier: Modifier = Modifier) {
                 when (screen) {
                     MAP -> LazyMapScreen()
                     GRID_NOT_LAZY -> NonLazyGridScreen(extraModifier)
-                    GRID_NOT_LAZY_SCROLL -> NonLazyGridScreenWithScroll(
-                        extraModifier,
-                        false
-                    )
-
-                    GRID_NOT_LAZY_SCROLL_BOUND -> NonLazyGridScreenWithScroll(
-                        extraModifier
-                    )
-
+                    GRID_NOT_LAZY_SCROLL -> NonLazyGridScreenWithScroll(extraModifier, false)
+                    GRID_NOT_LAZY_SCROLL_BOUND -> NonLazyGridScreenWithScroll(extraModifier)
                     GRID_LAZY_SIMPLE -> LazyGridScreenSimple(extraModifier)
                     GRID_LAZY_SIMPLE_SCROLL -> LazyGridScreenSimpleScroll(extraModifier)
                     GRID_LAZY_SCROLL -> LazyGridScreenRealScroll(extraModifier)
@@ -131,6 +130,17 @@ fun MainContent(modifier: Modifier = Modifier) {
                         extraModifier,
                         showDebugInfo = SHOW_DEBUG_INFO,
                         toggleFullScreen = onShowScreenSelector,
+                        toggleBorder = toggleBorder,
+                        useSheep = SHEEP,
+                    )
+
+                    GRID_SHEEP -> LazyGridScreenScrollZoom(
+                        extraModifier,
+                        showDebugInfo = SHOW_DEBUG_INFO,
+                        toggleFullScreen = onShowScreenSelector,
+                        toggleBorder = toggleBorder,
+                        useSheep = true,
+                        showItemText = false,
                     )
                 }
             }
