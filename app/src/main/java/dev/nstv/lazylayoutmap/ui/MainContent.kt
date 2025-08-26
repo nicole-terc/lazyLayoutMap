@@ -42,7 +42,7 @@ import dev.nstv.lazylayoutmap.ui.map.LazyMapScreen
 import dev.nstv.lazylayoutmap.ui.theme.Grid
 import dev.nstv.lazylayoutmap.ui.theme.components.DropDownWithArrows
 
-private const val HIDE_DROPDOWN = true
+private const val HIDE_DROPDOWN = false
 private const val SHOW_BORDER = false
 private const val SHOW_DEBUG_INFO = false
 const val SHEEP = false
@@ -66,7 +66,7 @@ fun MainContent(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .safeDrawingPadding()
     ) { contentPadding ->
-        var selectedScreen by remember { mutableStateOf(GRID_LAZY_SCROLL) }
+        var selectedScreen by remember { mutableStateOf(GRID_LAZY_SCROLL_ZOOM) }
         var showScreenSelector by remember { mutableStateOf(!HIDE_DROPDOWN) }
         val onShowScreenSelector = {
             showScreenSelector = !showScreenSelector

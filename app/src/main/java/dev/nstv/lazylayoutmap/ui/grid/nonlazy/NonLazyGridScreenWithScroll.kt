@@ -78,6 +78,9 @@ fun NonLazyGridScreenWithScroll(
                 detectTapGestures(
                     onDoubleTap = {
                         itemsPerRow = itemsPerRow + itemsPerRow
+                    },
+                    onLongPress = {
+                        offset  = Offset.Zero
                     }
                 )
             }
