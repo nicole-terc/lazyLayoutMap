@@ -23,6 +23,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.zIndex
 import dev.nstv.composablesheep.library.util.SheepColor
 import dev.nstv.lazylayoutmap.ui.Screen.GRID_LAZY_SCROLL
+import dev.nstv.lazylayoutmap.ui.Screen.GRID_LAZY_SCROLL_ZOOM
 import dev.nstv.lazylayoutmap.ui.Screen.GRID_LAZY_SIMPLE
 import dev.nstv.lazylayoutmap.ui.Screen.GRID_LAZY_SIMPLE_SCROLL
 import dev.nstv.lazylayoutmap.ui.Screen.GRID_NOT_LAZY
@@ -30,6 +31,7 @@ import dev.nstv.lazylayoutmap.ui.Screen.GRID_NOT_LAZY_SCROLL
 import dev.nstv.lazylayoutmap.ui.Screen.GRID_NOT_LAZY_SCROLL_BOUND
 import dev.nstv.lazylayoutmap.ui.Screen.MAP
 import dev.nstv.lazylayoutmap.ui.grid.lazylayout.LazyGridScreenRealScroll
+import dev.nstv.lazylayoutmap.ui.grid.lazylayout.LazyGridScreenScrollZoom
 import dev.nstv.lazylayoutmap.ui.grid.lazylayout.LazyGridScreenSimple
 import dev.nstv.lazylayoutmap.ui.grid.lazylayout.LazyGridScreenSimpleScroll
 import dev.nstv.lazylayoutmap.ui.grid.nonlazy.NonLazyGridScreen
@@ -48,6 +50,7 @@ private enum class Screen {
     GRID_LAZY_SIMPLE,
     GRID_LAZY_SIMPLE_SCROLL,
     GRID_LAZY_SCROLL,
+    GRID_LAZY_SCROLL_ZOOM,
 }
 
 @Composable
@@ -57,7 +60,7 @@ fun MainContent(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .safeDrawingPadding()
     ) { contentPadding ->
-        var selectedScreen by remember { mutableStateOf(GRID_LAZY_SCROLL) }
+        var selectedScreen by remember { mutableStateOf(GRID_LAZY_SCROLL_ZOOM) }
 
         val extraModifier = if (SHOW_BORDER) {
             Modifier
@@ -104,6 +107,7 @@ fun MainContent(modifier: Modifier = Modifier) {
                     GRID_LAZY_SIMPLE -> LazyGridScreenSimple(extraModifier)
                     GRID_LAZY_SIMPLE_SCROLL -> LazyGridScreenSimpleScroll(extraModifier)
                     GRID_LAZY_SCROLL -> LazyGridScreenRealScroll(extraModifier)
+                    GRID_LAZY_SCROLL_ZOOM -> LazyGridScreenScrollZoom(extraModifier)
                 }
             }
         }

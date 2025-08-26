@@ -7,6 +7,8 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.innerShadow
@@ -17,20 +19,34 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun GridItemView(
     item: CustomGridItem,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showText: Boolean = true,
+    zoomLevel: () -> Float = { MIN_ZOOM_LEVEL },
 ) {
+
+    val actualZoomLevel by rememberUpdatedState(zoomLevel)
+
     Box(
         modifier = modifier
             .size(DEFAULT_GRID_ITEM_SIZE)
             .background(color = item.color, shape = MaterialTheme.shapes.small)
             .innerShadow(
                 shape = MaterialTheme.shapes.small,
-                shadow = Shadow(radius = 4.dp)
+                shadow = Shadow(radius = 4.dp * actualZoomLevel())
             )
-            .border(width = 1.dp, color = item.borderColor, shape = MaterialTheme.shapes.small),
+            .border(
+                width = 1.dp * actualZoomLevel(),
+                color = item.borderColor,
+                shape = MaterialTheme.shapes.small
+            ),
         contentAlignment = Alignment.Center,
     ) {
-        Text(item.id)
+        if (showText) {
+            Text(
+                item.id,
+                fontSize = MaterialTheme.typography.headlineSmall.fontSize * actualZoomLevel()
+            )
+        }
     }
 
 }

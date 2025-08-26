@@ -12,7 +12,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
-import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Placeable
 import androidx.compose.ui.platform.LocalDensity
@@ -27,7 +26,6 @@ import dev.nstv.lazylayoutmap.ui.grid.griditem.rememberGridItems
 @Composable
 fun LazyGridScreenRealScroll(
     modifier: Modifier = Modifier,
-    constrainScroll: Boolean = false,
 ) {
     val density = LocalDensity.current
     val defaultItemSize = with(density) { DEFAULT_GRID_ITEM_SIZE.toPx() }
@@ -38,33 +36,12 @@ fun LazyGridScreenRealScroll(
     val itemProvider = remember(items) { LazyGridItemProvider(items) }
 
     var offset by remember { mutableStateOf(Offset.Zero) }
-    var contentWidth by remember { mutableIntStateOf(0) }
-    var contentHeight by remember { mutableIntStateOf(0) }
-    var layoutWidth by remember { mutableIntStateOf(0) }
-    var layoutHeight by remember { mutableIntStateOf(0) }
 
     val scrollableModifier =
         Modifier.scrollable2D(
             state = rememberScrollable2DState { delta ->
-                if (constrainScroll) {
-                    val newOffset = offset + delta
-
-                    val minScrollX = -(contentWidth - layoutWidth).coerceAtLeast(0).toFloat()
-                    val maxScrollX = 0f
-                    val minScrollY = -(contentHeight - layoutHeight).coerceAtLeast(0).toFloat()
-                    val maxScrollY = 0f
-
-                    // Apply constraints
-                    val constrainedX = newOffset.x.coerceIn(minScrollX, maxScrollX)
-                    val constrainedY = newOffset.y.coerceIn(minScrollY, maxScrollY)
-
-                    val consumed = Offset(constrainedX - offset.x, constrainedY - offset.y)
-                    offset = Offset(constrainedX, constrainedY)
-                    consumed // Return the consumed delta
-                } else {
-                    offset = offset + delta
-                    delta // Return the original delta if not constraining
-                }
+                offset = offset + delta
+                delta
             }
         )
 
@@ -77,10 +54,6 @@ fun LazyGridScreenRealScroll(
                         itemsPerRow *= ITEM_INCREASE_FACTOR
                     }
                 )
-            }
-            .graphicsLayer {
-                translationX = offset.x
-                translationY = offset.y
             },
         itemProvider = { itemProvider },
     ) { constraints ->
