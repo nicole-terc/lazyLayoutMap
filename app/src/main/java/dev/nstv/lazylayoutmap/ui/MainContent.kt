@@ -126,6 +126,7 @@ fun MainContent(modifier: Modifier = Modifier) {
                         showDebugInfo = SHOW_DEBUG_INFO,
                         toggleFullScreen = onShowScreenSelector,
                         useSheep = SHEEP,
+                        showItemText = SHOW_DEBUG_INFO,
                     )
 
                     GRID_SHEEP -> LazyGridScreenScrollZoom(
