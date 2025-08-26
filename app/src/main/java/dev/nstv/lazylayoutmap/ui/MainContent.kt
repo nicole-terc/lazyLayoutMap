@@ -2,7 +2,6 @@ package dev.nstv.lazylayoutmap.ui
 
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.Crossfade
-import androidx.compose.animation.core.animateDpAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -22,7 +21,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
 import dev.nstv.composablesheep.library.util.SheepColor
 import dev.nstv.lazylayoutmap.ui.Screen.GRID_LAZY_SCROLL
@@ -44,6 +42,7 @@ import dev.nstv.lazylayoutmap.ui.map.LazyMapScreen
 import dev.nstv.lazylayoutmap.ui.theme.Grid
 import dev.nstv.lazylayoutmap.ui.theme.components.DropDownWithArrows
 
+private const val HIDE_DROPDOWN = false
 private const val SHOW_BORDER = false
 private const val SHOW_DEBUG_INFO = false
 const val SHEEP = false
@@ -68,22 +67,18 @@ fun MainContent(modifier: Modifier = Modifier) {
             .safeDrawingPadding()
     ) { contentPadding ->
         var selectedScreen by remember { mutableStateOf(GRID_LAZY_SCROLL_ZOOM) }
-        var showScreenSelector by remember { mutableStateOf(true) }
+        var showScreenSelector by remember { mutableStateOf(!HIDE_DROPDOWN) }
         val onShowScreenSelector = {
             showScreenSelector = !showScreenSelector
         }
-        var showBorder by remember { mutableStateOf(SHOW_BORDER) }
-        val borderWidth by animateDpAsState(
-            targetValue = if (showBorder) Grid.Ten else 0.dp
-        )
 
-        val toggleBorder = {
-            showBorder = !showBorder
-        }
+        val borderModifier = Modifier
+            .border(width = Grid.Seven, color = SheepColor.Black.copy(alpha = 0.5f))
+            .padding(Grid.Seven)
 
-        val extraModifier = Modifier
-            .border(width = borderWidth, color = SheepColor.Black.copy(alpha = 0.5f))
-            .padding(borderWidth)
+        val extraModifier = if (SHOW_BORDER) {
+            borderModifier
+        } else Modifier
 
         Column(
             modifier = Modifier
@@ -130,7 +125,6 @@ fun MainContent(modifier: Modifier = Modifier) {
                         extraModifier,
                         showDebugInfo = SHOW_DEBUG_INFO,
                         toggleFullScreen = onShowScreenSelector,
-                        toggleBorder = toggleBorder,
                         useSheep = SHEEP,
                     )
 
@@ -138,7 +132,6 @@ fun MainContent(modifier: Modifier = Modifier) {
                         extraModifier,
                         showDebugInfo = SHOW_DEBUG_INFO,
                         toggleFullScreen = onShowScreenSelector,
-                        toggleBorder = toggleBorder,
                         useSheep = true,
                         showItemText = false,
                     )

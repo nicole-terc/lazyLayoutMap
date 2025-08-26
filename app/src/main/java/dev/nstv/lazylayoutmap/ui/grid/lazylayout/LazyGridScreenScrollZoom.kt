@@ -53,7 +53,6 @@ fun LazyGridScreenScrollZoom(
     showDebugInfo: Boolean = true,
     useSheep: Boolean = SHEEP,
     toggleFullScreen: () -> Unit = {},
-    toggleBorder: () -> Unit = {}
 ) {
     val density = LocalDensity.current
 
@@ -98,7 +97,6 @@ fun LazyGridScreenScrollZoom(
                             itemsPerRow *= ITEM_INCREASE_FACTOR
                         },
                         onLongPress = {
-                            toggleBorder()
                             restartCamera()
                         }
                     )

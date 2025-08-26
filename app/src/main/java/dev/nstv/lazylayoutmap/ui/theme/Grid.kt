@@ -12,5 +12,8 @@ object Grid {
     val Four = 32.dp
     val Five = 40.dp
     val Six = 48.dp
+    val Seven = 56.dp
+    val Eight = 64.dp
+    val Nine = 72.dp
     val Ten = 80.dp
 }
