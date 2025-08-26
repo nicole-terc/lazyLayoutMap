@@ -20,7 +20,8 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.zIndex
-import dev.nstv.lazylayoutmap.ui.grid.lazylayout.LazyLayoutGridScreen
+import dev.nstv.lazylayoutmap.ui.grid.lazylayout.LazyGridScreenSimpleScroll
+import dev.nstv.lazylayoutmap.ui.grid.lazylayout.LazyGridScreenSimple
 import dev.nstv.lazylayoutmap.ui.grid.nonlazy.NonLazyGridScreen
 import dev.nstv.lazylayoutmap.ui.grid.nonlazy.NonLazyGridScreenWithScroll
 import dev.nstv.lazylayoutmap.ui.map.LazyMapScreen
@@ -32,7 +33,8 @@ private enum class Screen {
     GRID_NOT_LAZY,
     GRID_NOT_LAZY_SCROLL,
     GRID_NOT_LAZY_SCROLL_BOUND,
-    GRID_LAZY,
+    GRID_LAZY_SIMPLE,
+    GRID_LAZY_SIMPLE_SCROLL,
 }
 
 @Composable
@@ -42,7 +44,7 @@ fun MainContent(modifier: Modifier = Modifier) {
             .fillMaxSize()
             .safeDrawingPadding()
     ) { contentPadding ->
-        var selectedScreen by remember { mutableStateOf(Screen.GRID_NOT_LAZY_SCROLL) }
+        var selectedScreen by remember { mutableStateOf(Screen.GRID_LAZY_SIMPLE_SCROLL) }
 
         Column(
             modifier = Modifier
@@ -81,7 +83,8 @@ fun MainContent(modifier: Modifier = Modifier) {
                     Screen.GRID_NOT_LAZY -> NonLazyGridScreen()
                     Screen.GRID_NOT_LAZY_SCROLL -> NonLazyGridScreenWithScroll(constrainScroll = false)
                     Screen.GRID_NOT_LAZY_SCROLL_BOUND -> NonLazyGridScreenWithScroll()
-                    Screen.GRID_LAZY -> LazyLayoutGridScreen()
+                    Screen.GRID_LAZY_SIMPLE -> LazyGridScreenSimple()
+                    Screen.GRID_LAZY_SIMPLE_SCROLL -> LazyGridScreenSimpleScroll()
                 }
             }
         }
