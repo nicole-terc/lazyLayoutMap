@@ -1,5 +1,6 @@
 package dev.nstv.lazylayoutmap.ui.grid.nonlazy
 
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.gestures.rememberScrollable2DState
 import androidx.compose.foundation.gestures.scrollable2D
 import androidx.compose.runtime.Composable
@@ -11,9 +12,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.graphicsLayer
+import androidx.compose.ui.input.pointer.pointerInput
 import androidx.compose.ui.layout.Layout
 import dev.nstv.lazylayoutmap.ui.grid.griditem.CustomGridItem
 import dev.nstv.lazylayoutmap.ui.grid.griditem.GridItemView
+import dev.nstv.lazylayoutmap.ui.grid.griditem.ITEMS_PER_ROW
 import dev.nstv.lazylayoutmap.ui.grid.griditem.rememberGridItems
 import kotlin.math.max
 import kotlin.math.min
@@ -24,7 +27,9 @@ fun NonLazyGridScreenWithScroll(
     constrainScroll: Boolean = true,
 ) {
 
-    val items: List<CustomGridItem> = rememberGridItems()
+    var itemsPerRow by remember { mutableIntStateOf(ITEMS_PER_ROW) }
+
+    val items: List<CustomGridItem> = rememberGridItems(itemsPerRow)
 
     var offset by remember { mutableStateOf(Offset.Zero) }
     var contentWidth by remember { mutableIntStateOf(0) }
@@ -69,6 +74,13 @@ fun NonLazyGridScreenWithScroll(
     Layout(
         modifier = modifier
             .then(scrollableModifier)
+            .pointerInput(Unit) {
+                detectTapGestures(
+                    onDoubleTap = {
+                        itemsPerRow = itemsPerRow + itemsPerRow
+                    }
+                )
+            }
             .graphicsLayer {
                 translationX = offset.x
                 translationY = offset.y

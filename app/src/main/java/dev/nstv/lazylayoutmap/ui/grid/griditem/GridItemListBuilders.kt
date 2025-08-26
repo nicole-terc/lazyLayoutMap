@@ -14,7 +14,7 @@ fun rememberGridItems(
     itemsPerRow: Int = ITEMS_PER_ROW,
     itemSize: Dp = DEFAULT_GRID_SIZE,
     density: Density = LocalDensity.current,
-) = remember {
+) = remember(itemSize, itemsPerRow, density) {
     val gridItemWidth = with(density) { itemSize.toPx().fastRoundToInt() }
 
     buildList {
