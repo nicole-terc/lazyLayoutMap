@@ -1,8 +1,12 @@
 package dev.nstv.lazylayoutmap.ui.grid.griditem
 
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.luminance
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.graphics.toColorLong
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.ColorUtils
 import dev.nstv.composablesheep.library.util.SheepColor
 
 val DEFAULT_GRID_ITEM_SIZE = 80.dp
@@ -20,4 +24,28 @@ data class CustomGridItem(
     val minZoomLevel: Float = 1f,
     val maxZoomLevel: Float = MAX_ZOOM_LEVEL,
     val fullSizeZoomLevel: Float = minZoomLevel, // Zoom level at witch this item is at 100% size, useful for aligning different items at different zoom levels
-)
+) {
+    val shadowColor = color.getShadowColor()
+}
+
+fun Color.toComplementaryColor(): Color {
+    val argb = this.toArgb()
+    val hsl = FloatArray(3)
+    ColorUtils.colorToHSL(argb, hsl)
+
+    // Rotate hue by 180° (wrap around 360)
+    hsl[0] = (hsl[0] + 180f) % 360f
+
+    val complementaryArgb = ColorUtils.HSLToColor(hsl)
+    return Color(complementaryArgb)
+}
+
+fun Color.getShadowColor() =
+    if (this.luminance() > 0.5f) {
+        SheepColor.Black
+    } else {
+        SheepColor.Fluff
+    }
+
+
+

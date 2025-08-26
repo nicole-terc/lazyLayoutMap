@@ -12,7 +12,7 @@ import kotlin.math.ceil
 
 const val ITEMS_PER_ROW = 10
 const val ITEM_INCREASE_FACTOR = 2
-const val MAX_ITEMS_PER_ROW = 400
+const val MAX_ITEMS_PER_ROW = 300
 const val ZOOM_THRESHOLD = 0.5f
 
 @Composable
@@ -46,11 +46,11 @@ fun rememberGridItems(
 
 val colorOptions = listOf(
     SheepColor.Green,
-    SheepColor.Orange,
-    SheepColor.Blue,
-    Color.Yellow,
-    Color.Cyan,
+//    SheepColor.Orange,
     SheepColor.Magenta,
+//    SheepColor.Blue,
+    Color.Cyan,
+    Color.Yellow,
     SheepColor.Purple,
 )
 
@@ -59,10 +59,11 @@ fun rememberGridItemsWithZoom(
     itemsPerRow: Int = 5,
     itemSize: Dp = DEFAULT_GRID_ITEM_SIZE,
     density: Density = LocalDensity.current,
-    zoomLevels: List<Float> = listOf(1f, 2f, 4f, 8f),
+    zoomLevels: List<Float> = listOf(1f, 2f, 4f, 8f),// Needs to be incremental
 ) = remember(itemSize, itemsPerRow, density) {
+    val maxItemsPerRowWithZoom = MAX_ITEMS_PER_ROW / zoomLevels.size
 
-    val adjustedItemsPerRow = itemsPerRow.coerceAtMost(MAX_ITEMS_PER_ROW)
+    val adjustedItemsPerRow = itemsPerRow.coerceAtMost(maxItemsPerRowWithZoom)
     val gridItemWidth = with(density) { itemSize.toPx().fastRoundToInt() }
 
     val zoomLevelColors = buildList {
@@ -106,10 +107,12 @@ fun rememberGridItemsWithZoomAdjustedColors(
     itemsPerRow: Int = ITEMS_PER_ROW,
     itemSize: Dp = DEFAULT_GRID_ITEM_SIZE,
     density: Density = LocalDensity.current,
-    zoomLevels: List<Float> = listOf(1f, 2f, 4f, 8f),
+    zoomLevels: List<Float> = listOf(1f, 2f, 4f, 8f), // Needs to be incremental
 ) = remember(itemSize, itemsPerRow, density) {
 
-    val adjustedItemsPerRow = itemsPerRow.coerceAtMost(MAX_ITEMS_PER_ROW)
+    val maxItemsPerRowWithZoom = MAX_ITEMS_PER_ROW / zoomLevels.size
+
+    val adjustedItemsPerRow = itemsPerRow.coerceAtMost(maxItemsPerRowWithZoom)
     val gridItemWidth = with(density) { itemSize.toPx().fastRoundToInt() }
 
 

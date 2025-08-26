@@ -19,8 +19,10 @@ import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.graphics.shadow.Shadow
+import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.core.graphics.ColorUtils
 import dev.nstv.composablesheep.library.ComposableSheep
 import dev.nstv.composablesheep.library.model.Sheep
 import dev.nstv.composablesheep.library.util.SheepColor
@@ -65,11 +67,11 @@ fun GridItemView(
     ) {
         if (useSheep) {
             val sheepAlpha = item.color.alpha
-            val shadowColor = SheepColor.Black.copy(0.3f)
             val sheep = Sheep(
                 fluffColor = item.color,
                 legColor = SheepColor.Skin.copy(sheepAlpha),
             )
+            val sheepBorderColor = item.borderColor.copy(0.3f)
             ComposableSheep(
                 modifier = Modifier
                     .fillMaxSize()
@@ -78,11 +80,11 @@ fun GridItemView(
                         rotationY = if (item.index % 2 == 0) 180f else 0f
                     },
                 sheep = sheep,
-                fluffColor = shadowColor,
-                legColor = shadowColor,
-                headColor = shadowColor,
-                glassesColor = shadowColor,
-                eyeColor = shadowColor,
+                fluffColor = sheepBorderColor,
+                legColor = sheepBorderColor,
+                headColor = sheepBorderColor,
+                glassesColor = sheepBorderColor,
+                eyeColor = sheepBorderColor,
             )
             ComposableSheep(
                 modifier = Modifier
