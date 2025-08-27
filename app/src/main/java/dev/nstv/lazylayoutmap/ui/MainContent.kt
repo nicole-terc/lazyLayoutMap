@@ -62,6 +62,7 @@ private enum class Screen {
 @Composable
 fun MainContent(modifier: Modifier = Modifier) {
     Scaffold(
+        containerColor = MaterialTheme.colorScheme.surface,
         modifier = modifier
             .fillMaxSize()
             .safeDrawingPadding()
