@@ -87,9 +87,9 @@ fun LazyGridScreenRealScroll(
         }
 
         layout(viewportWidth, viewportHeight) {
-            placeablesIndexed.forEach {
-                val item = items[it.first]
-                it.second.placeRelative(item.x, item.y)
+            placeablesIndexed.forEach { (index, placeable) ->
+                val item = items[index]
+                placeable.placeRelative(item.x, item.y)
             }
         }
     }
