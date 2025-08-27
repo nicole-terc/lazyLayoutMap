@@ -1,5 +1,5 @@
 # Let's Lazy Layout!
-
+> Slides: [LetsLazyLayout.pdf](https://github.com/user-attachments/files/22007863/LetsLazyLayout.pdf)
 
 **Includes working samples of:**
 - Custom Layout
